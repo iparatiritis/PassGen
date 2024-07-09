@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: left;
+        }
+        input[type="number"] {
+            width: 60px;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Password Generator</h2>
+        <label for="length">Password Length (4-64):</label>
+        <input type="number" id="length" name="length" min="4" max="64" value="12"><br><br>
+
+        <input type="checkbox" id="letters" name="letters" checked onclick="toggleMixedCase()">
+        <label for="letters">Include Letters</label><br>
+
+        <input type="checkbox" id="mixedCase" name="mixedCase" checked>
+        <label for="mixedCase">Include Mixed Case Letters</label><br>
+
+        <input type="checkbox" id="numbers" name="numbers" checked>
+        <label for="numbers">Include Numbers</label><br>
+
+        <input type="checkbox" id="punctuation" name="punctuation" checked>
+        <label for="punctuation">Include Punctuation</label><br><br>
+
+        <button onclick="generatePassword()">Generate Password</button><br><br>
+
+        <label for="result">Generated Password:</label>
+        <input type="text" id="result" name="result" readonly><br>
+
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
+    </div>
+
+    <script>
+        function toggleMixedCase() {
+            const includeLetters = document.getElementById('letters').checked;
+            const mixedCaseCheckbox = document.getElementById('mixedCase');
+            
+            if (!includeLetters) {
+                mixedCaseCheckbox.checked = false;
+                mixedCaseCheckbox.disabled = true;
+            } else {
+                mixedCaseCheckbox.disabled = false;
+            }
+        }
+
+        function generatePassword() {
+            const length = document.getElementById('length').value;
+            const includeLetters = document.getElementById('letters').checked;
+            const includeMixedCase = document.getElementById('mixedCase').checked;
+            const includeNumbers = document.getElementById('numbers').checked;
+            const includePunctuation = document.getElementById('punctuation').checked;
+
+            let charset = '';
+            const lowerLetters = 'abcdefghijklmnopqrstuvwxyz';
+            const upperLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const numbers = '0123456789';
+            const punctuation = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
+
+            if (includeLetters) {
+                charset += lowerLetters;
+                if (includeMixedCase) charset += upperLetters;
+            }
+            if (includeNumbers) charset += numbers;
+            if (includePunctuation) charset += punctuation;
+
+            if (charset === '') {
+                alert('Please select at least one character set.');
+                return;
+            }
+
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
+            }
+
+            document.getElementById('result').value = password;
+        }
+
+        function copyToClipboard() {
+            const passwordField = document.getElementById('result');
+            passwordField.select();
+            passwordField.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+            alert("Password copied to clipboard!");
+        }
+
+        // Initialize the state of mixed case checkbox on page load
+        toggleMixedCase();
+    </script>
+</body>
+</html>
